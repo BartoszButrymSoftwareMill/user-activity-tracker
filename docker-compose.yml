@@ -1,0 +1,22 @@
+services:
+  database:
+    image: postgres
+    container_name: activity_tracker_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: activity_tracker
+    ports:
+      - 5432:5432
+    volumes:
+      - dockeractivitytrackerdata:/var/lib/postgresql/data
+      - ./shared/sql/init-users.sql:/docker-entrypoint-initdb.d/init-users.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d activity_tracker']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  dockeractivitytrackerdata:
