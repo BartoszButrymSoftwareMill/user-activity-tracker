@@ -1,18 +1,18 @@
 import { Hono } from 'hono';
-import { createUser } from 'src/services/users.js';
-import usersService from '@shared/services/users.js';
+import { getAllUsersWithActivities, getUserById } from '@shared/services/users';
+import { createUser } from 'src/services/users';
 
 const usersRoute = new Hono();
 
 usersRoute.get('/', async (c) => {
-  const usersRecords = await usersService.getAllUsersWithActivities();
+  const usersRecords = await getAllUsersWithActivities();
 
   return c.json(usersRecords);
 });
 
 usersRoute.get('/:id', async (c) => {
   const id = c.req.param('id');
-  const userRecord = await usersService.getUserById(id);
+  const userRecord = await getUserById(id);
 
   return c.json(userRecord);
 });

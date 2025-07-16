@@ -1,17 +1,20 @@
 import { Hono } from 'hono';
-import activitiesService from '@shared/services/activities.js';
+import {
+  getAllActivitiesWithUser,
+  getActivityById,
+} from '@shared/services/activities';
 
 const activitiesRoute = new Hono();
 
 activitiesRoute.get('/', async (c) => {
-  const activitiesRecords = await activitiesService.getAllActivitiesWithUser();
+  const activitiesRecords = await getAllActivitiesWithUser();
 
   return c.json(activitiesRecords);
 });
 
 activitiesRoute.get('/:id', async (c) => {
   const id = c.req.param('id');
-  const activityRecord = await activitiesService.getActivityById(id);
+  const activityRecord = await getActivityById(id);
 
   return c.json(activityRecord);
 });

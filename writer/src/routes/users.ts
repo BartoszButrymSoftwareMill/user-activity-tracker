@@ -1,39 +1,35 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import userValidators from '@shared/validators/users.js';
-import { createUser, deleteUser, updateUser } from 'src/services/users.js';
-import usersService from '@shared/services/users.js';
+import { userSchema, idParamSchema } from '@shared/validators/users';
+import { getAllUsersWithActivities, getUserById } from '@shared/services/users';
+import { createUser, deleteUser, updateUser } from 'src/services/users';
 
 const usersRoute = new Hono();
 
-usersRoute.post(
-  '/',
-  zValidator('json', userValidators.userSchema),
-  async (c) => {
-    const validated = c.req.valid('json');
-    const { name, age, email } = validated;
-    const newUser = await createUser({ name, age, email });
+usersRoute.post('/', zValidator('json', userSchema), async (c) => {
+  const validated = c.req.valid('json');
+  const { name, age, email } = validated;
+  const newUser = await createUser({ name, age, email });
 
-    return c.json(newUser);
-  }
-);
+  return c.json(newUser);
+});
 
 usersRoute.get('/', async (c) => {
-  const usersRecords = await usersService.getAllUsersWithActivities();
+  const usersRecords = await getAllUsersWithActivities();
 
   return c.json(usersRecords);
 });
 
 usersRoute.put(
   '/:id',
-  zValidator('param', userValidators.idParamSchema),
-  zValidator('json', userValidators.userSchema),
+  zValidator('param', idParamSchema),
+  zValidator('json', userSchema),
   async (c) => {
     const { id } = c.req.valid('param');
     const validated = c.req.valid('json');
     const { name, age, email } = validated;
 
-    const foundUser = await usersService.getUserById(id);
+    const foundUser = await getUserById(id);
 
     if (!foundUser.length) {
       return c.json({ error: 'User not found' }, 404);
@@ -44,21 +40,17 @@ usersRoute.put(
   }
 );
 
-usersRoute.delete(
-  '/:id',
-  zValidator('param', userValidators.idParamSchema),
-  async (c) => {
-    const { id } = c.req.valid('param');
-    const foundUser = await usersService.getUserById(id);
+usersRoute.delete('/:id', zValidator('param', idParamSchema), async (c) => {
+  const { id } = c.req.valid('param');
+  const foundUser = await getUserById(id);
 
-    if (!foundUser.length) {
-      return c.json({ error: 'User not found' }, 404);
-    }
-
-    const deletedUser = await deleteUser(id);
-
-    return c.json(deletedUser);
+  if (!foundUser.length) {
+    return c.json({ error: 'User not found' }, 404);
   }
-);
+
+  const deletedUser = await deleteUser(id);
+
+  return c.json(deletedUser);
+});
 
 export default usersRoute;

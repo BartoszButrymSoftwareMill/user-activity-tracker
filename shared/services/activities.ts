@@ -15,8 +15,3 @@ export const getActivityById = async (id: string) => {
     where: eq(activities.id, id),
   });
 };
-
-export default {
-  getAllActivitiesWithUser,
-  getActivityById,
-};

@@ -1,7 +1,7 @@
-import db from '@shared/db/index.js';
-import schema from '@shared/db/schema/index.js';
-import { type NewActivity } from '@shared/db/schema/activities.js';
+import db from '@shared/db/index';
+import { activities } from '@shared/db/schema/index';
+import { type NewActivity } from '@shared/db/schema/activities';
 
 export const createActivity = async (activity: NewActivity) => {
-  return await db.default.insert(schema.activities).values(activity);
+  return await db.insert(activities).values(activity);
 };

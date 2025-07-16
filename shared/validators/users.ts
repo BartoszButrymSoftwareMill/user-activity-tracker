@@ -12,8 +12,3 @@ export const userSchema = z.object({
 export const idParamSchema = z.object({
   id: z.string().uuid(),
 });
-
-export default {
-  userSchema,
-  idParamSchema,
-};
