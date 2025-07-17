@@ -9,6 +9,11 @@ export const userSchema = z.object({
     .max(255, 'Email is too long'),
 });
 
+export const userUpdateSchema = userSchema.pick({
+  name: true,
+  age: true,
+});
+
 export const idParamSchema = z.object({
   id: z.string().uuid(),
 });

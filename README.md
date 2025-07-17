@@ -102,6 +102,7 @@ The system implements a robust security model with role-based access:
 - `GET /users` - List all users
 - `POST /users` - Create a new user
 - `PUT /users/:id` - Update a user
+- `PATCH /users/:id` - Update a user and an activity
 - `DELETE /users/:id` - Delete a user
 - `GET /activities` - List all activities
 - `POST /activities` - Create a new activity
@@ -113,6 +114,25 @@ The system implements a robust security model with role-based access:
 - `GET /users/:id` - Get a specific user
 - `GET /activities` - List all activities
 - `GET /activities/:id` - Get a specific activity
+
+## Drizzle transactions
+
+This project demonstrates the use of Drizzle ORM transactions to ensure data consistency across multiple operations. Two key examples showcase transaction usage:
+
+### User creation with automatic activity
+When creating a user via `POST /users`, the system uses a transaction to:
+- insert the new user record
+- automatically create an activity record if the user is 40+ years old (longevity badge)
+
+This ensures both operations succeed or fail together, maintaining data integrity.
+
+### User update with activity tracking
+The `PATCH /users/:id` endpoint demonstrates nested transactions:
+- updates user information (name, age)
+- creates an activity record to track the update
+- uses nested transactions for complex business logic
+
+Transactions are implemented using Drizzle's `db.transaction()` method, providing ACID guarantees for multi-step operations.
 
 ## Development
 

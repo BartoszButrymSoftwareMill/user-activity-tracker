@@ -1,17 +1,31 @@
 import { Hono } from 'hono';
 import { zValidator } from '@hono/zod-validator';
-import { userSchema, idParamSchema } from '@shared/validators/users';
+import {
+  userSchema,
+  idParamSchema,
+  userUpdateSchema,
+} from '@shared/validators/users';
 import { getAllUsersWithActivities, getUserById } from '@shared/services/users';
-import { createUser, deleteUser, updateUser } from 'src/services/users';
+import {
+  createUser,
+  deleteUser,
+  updateUser,
+  updateUserAndActivities,
+} from 'src/services/users';
 
 const usersRoute = new Hono();
 
 usersRoute.post('/', zValidator('json', userSchema), async (c) => {
   const validated = c.req.valid('json');
   const { name, age, email } = validated;
-  const newUser = await createUser({ name, age, email });
 
-  return c.json(newUser);
+  try {
+    const newUser = await createUser({ name, age, email });
+    return c.json(newUser);
+  } catch (error) {
+    console.error(error);
+    return c.json({ error: 'Failed to create user' }, 500);
+  }
 });
 
 usersRoute.get('/', async (c) => {
@@ -37,6 +51,31 @@ usersRoute.put(
     const updatedUser = await updateUser(id, { name, age, email });
 
     return c.json(updatedUser);
+  }
+);
+
+usersRoute.patch(
+  '/:id',
+  zValidator('param', idParamSchema),
+  zValidator('json', userUpdateSchema),
+  async (c) => {
+    const { id } = c.req.valid('param');
+    const validated = c.req.valid('json');
+    const { name, age } = validated;
+
+    const foundUser = await getUserById(id);
+
+    if (!foundUser.length) {
+      return c.json({ error: 'User not found' }, 404);
+    }
+
+    try {
+      await updateUserAndActivities(id, { name, age });
+      return c.json({ message: 'User updated successfully' });
+    } catch (error) {
+      console.error(error);
+      return c.json({ error: 'Failed to update user' }, 500);
+    }
   }
 );
 

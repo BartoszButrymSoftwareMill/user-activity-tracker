@@ -7,6 +7,8 @@ export const activityTypeEnum = pgEnum('activity_type', [
   'LOGOUT',
   'VIEW_PAGE',
   'CLICK',
+  'UPDATE',
+  'LONGEVITY_BADGE',
 ]);
 
 const activities = pgTable('activities', {

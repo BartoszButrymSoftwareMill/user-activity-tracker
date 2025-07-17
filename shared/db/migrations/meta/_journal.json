@@ -15,6 +15,20 @@
       "when": 1751921848073,
       "tag": "0001_mixed_korath",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1752739405056,
+      "tag": "0002_curly_korg",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1752745797127,
+      "tag": "0003_slim_stark_industries",
+      "breakpoints": true
     }
   ]
 }
